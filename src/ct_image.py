@@ -2,7 +2,7 @@ from skimage import io
 from CTProgram import CT  
 
 
-filename = "images/gambar_1.jpg"
+filename = "../images/gambar_1.jpg"
 image = io.imread(filename)
 max_angle = 180.0 
 
