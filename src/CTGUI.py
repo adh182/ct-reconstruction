@@ -67,11 +67,17 @@ class Window:
 		lbl_max_angle = Label(self.frame1, text='Maximum Angle		: ', font=self.fontstyle3)
 		lbl_max_angle.place(x=20, y=90)
 
+		lbl_reconstruction = Label(self.frame1, text='Reconstruction Method	: ', font=self.fontstyle3)
+		lbl_reconstruction.place(x=20, y=120)
+
 		lbl_filter = Label(self.frame1, text='Filter Type		: ', font=self.fontstyle3)
-		lbl_filter.place(x=20, y=130)
+		lbl_filter.place(x=20, y=150)
 
 		lbl_num_proj = Label(self.frame1, text='Number of projection	: ', font=self.fontstyle3)
-		lbl_num_proj.place(x=20, y=170)
+		lbl_num_proj.place(x=20, y=180)
+
+		#combobox method
+		method_name = ['Filtered Back Projection', 'SART']
 
 		#combobox filter
 		filter_name = ['ramp', 'shepp-logan', 'cosine', 'hamming', 'hann']
@@ -83,15 +89,22 @@ class Window:
 		self.txt_angle = Text(self.frame1, width=25, height=1, font=self.fontstyle3)
 		self.txt_angle.place(x=200, y=90)
 
+		cmb_methodVar = StringVar()
+		self.cmb_method = ttk.Combobox(self.frame1, textvariable='cmb_methodVar', font=self.fontstyle4)
+		self.cmb_method['values'] = method_name
+		self.cmb_method['state'] = 'readonly'
+		self.cmb_method.current(0)
+		self.cmb_method.place(x=200, y=120)
+
 		cmb_filterVar = StringVar()
 		self.cmb_filter = ttk.Combobox(self.frame1, textvariable='cmb_filterVar', font=self.fontstyle4)
 		self.cmb_filter['values'] = filter_name
 		self.cmb_filter['state'] = 'readonly'
 		self.cmb_filter.current(0)
-		self.cmb_filter.place(x=200, y=130)
+		self.cmb_filter.place(x=200, y=150)
 
 		self.lbl_proj = Label(self.frame1, text='0 projections', font=self.fontstyle3)
-		self.lbl_proj.place(x=200, y=170)
+		self.lbl_proj.place(x=200, y=180)
 
 	def frame_2(self):
 		'''Frame 2 - for original image'''
