@@ -52,6 +52,15 @@ class CT:
 
 		return reconstruction
 
+	def sart(self):
+		"""Simultaneous algebraic reconstruction technique"""
+
+		__, theta, __ = self.process_image()
+		sinogram = self.radon_transform()
+
+		reconstruction_sart = iradon_sart(sinogram, theta=theta)
+
+		return reconstruction_sart
 
 	def graph(self):
 		"""Plot graph of original image, sinogram, image reconstruction"""
