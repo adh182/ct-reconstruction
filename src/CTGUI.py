@@ -150,6 +150,10 @@ class Window:
 		ct_img = CT(img, theta, filter_type)
 		sinogram = ct_img.radon_transform()
 		reconstruction = ct_img.filtered_back_projection()
+		#check reconstruction method is SART
+		if self.cmb_method.current == 'SART':
+			reconstruction = ct_img.sart()
+
 		__, __, num_projection = ct_img.process_image()
 		self.lbl_proj.config(text = str(num_projection)+' projections')
 
