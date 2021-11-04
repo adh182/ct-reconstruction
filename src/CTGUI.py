@@ -18,7 +18,7 @@ class Window:
 	def init_window(self):
 		'''Collect all method in a single window'''
 
-		self.master.title("Computed Tomography Projection")
+		self.master.title("Computed Tomography Reconstruction")
 		self.fontstyle1 = ('Courier', 17, 'bold')
 		self.fontstyle2 = ('Courier', 12, 'bold')
 		self.fontstyle3 = ('Times New Roman', 11)
@@ -46,7 +46,7 @@ class Window:
 	def title(self):
 		'''Make title: Computed Tomography Projection'''
 
-		title = Label(self.frame1, text="COMPUTED TOMOGRAPHY \nPROJECTION", font=self.fontstyle1, fg='#465a62')
+		title = Label(self.frame1, text="COMPUTED TOMOGRAPHY \nRECONSTRUCTION", font=self.fontstyle1, fg='#465a62')
 		# title.place(x=140, y=5)
 		title.place(x=100, y=5)
 
@@ -108,8 +108,8 @@ class Window:
 	def frame_4(self):
 		'''Frame 4 - for reconstruction image'''
 
-		frame4_title = Label(self.frame4, text="Filtered Back Projection", font=self.fontstyle2, fg='black')
-		frame4_title.place(x=115, y=5)
+		frame4_title = Label(self.frame4, text="Reconstruction", font=self.fontstyle2, fg='black')
+		frame4_title.place(x=165, y=5)
 
 	def load_image(self):
 		'''Load image button command'''
