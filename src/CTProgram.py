@@ -12,7 +12,7 @@ class CT:
 			max_angle = the maximum angle of projection
 			filter_name = the type of filter used in fbp
 		Result:
-			the graph of original, sinogram, filter back projection, and ssrt reconstruction.
+			the graph of original, sinogram, filter back projection, and sart reconstruction.
 
 		"""
 		self.image = image
