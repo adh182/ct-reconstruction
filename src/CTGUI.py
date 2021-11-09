@@ -56,13 +56,16 @@ class Window:
 		style = ttk.Style()
 		style.configure('TButton', font=self.fontstyle3, bg='dark blue', width=10)
 		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image)
-		image_button.place(x=320, y=210)
+		image_button.place(x=195, y=250)
 
 		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate)
 		calculate_button.place(x=320, y=250)
 
 		clear_button = ttk.Button(self.frame1, text='Clear', style='TButton', width=15, command=self.clear)
 		clear_button.place(x=320, y=290)
+
+		save_button = ttk.Button(self.frame1, text='Save', style='TButton', width=15, command=self.clear)
+		save_button.place(x=195, y=290)
 
 		lbl_max_angle = Label(self.frame1, text='Maximum Angle		: ', font=self.fontstyle3)
 		lbl_max_angle.place(x=20, y=90)
