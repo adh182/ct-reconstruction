@@ -89,4 +89,5 @@ class CT:
 		ax4.set_title("SART")
 		ax4.imshow(reconstruction_sart, cmap=plt.cm.Greys_r)
 
-		plt.show()
+		# plt.show()
+		return fig
