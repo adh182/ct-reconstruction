@@ -64,7 +64,7 @@ class Window:
 		clear_button = ttk.Button(self.frame1, text='Clear', style='TButton', width=15, command=self.clear)
 		clear_button.place(x=320, y=290)
 
-		save_button = ttk.Button(self.frame1, text='Save', style='TButton', width=15, command=self.clear)
+		save_button = ttk.Button(self.frame1, text='Save', style='TButton', width=15, command=self.save)
 		save_button.place(x=195, y=290)
 
 		lbl_max_angle = Label(self.frame1, text='Maximum Angle		: ', font=self.fontstyle3)
@@ -184,6 +184,18 @@ class Window:
 		self.canvas_sinogram.get_tk_widget().destroy()
 		self.canvas_recons.get_tk_widget().destroy()
 		self.lbl_proj.config(text = '0 projections')
+
+	def save(self):
+		'''Save button command - to save graph as png file'''
+
+		file = filedialog.asksaveasfile(mode='w', filetypes=[('PNG', '*.png')], defaultextension='.*')
+
+		if file is None:
+			'''If user cancels'''
+			return
+		
+
+
 
 
 root = Tk()
