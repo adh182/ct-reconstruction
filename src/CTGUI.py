@@ -6,6 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from tkinter import filedialog
 from skimage import io
 from CTProgram import CT
+import os
 
 class Window:
 
@@ -150,15 +151,15 @@ class Window:
 		theta = int(self.txt_angle.get("1.0", "end"))
 		filter_type = self.cmb_filter.get() 
 
-		ct_img = CT(img, theta, filter_type)
-		sinogram = ct_img.radon_transform()
-		reconstruction = ct_img.filtered_back_projection()
+		self.ct_img = CT(img, theta, filter_type)
+		sinogram = self.ct_img.radon_transform()
+		reconstruction = self.ct_img.filtered_back_projection()
 
 		#check if reconstruction method is SART
 		if self.cmb_method.current == 'SART':
-			reconstruction = ct_img.sart()
+			reconstruction = self.ct_img.sart()
 
-		__, __, num_projection = ct_img.process_image()
+		__, __, num_projection = self.ct_img.process_image()
 		self.lbl_proj.config(text = str(num_projection)+' projections')
 
 		#create sinogram graph
@@ -188,14 +189,18 @@ class Window:
 	def save(self):
 		'''Save button command - to save graph as png file'''
 
-		file = filedialog.asksaveasfile(mode='w', filetypes=[('PNG', '*.png')], defaultextension='.*')
+		file = filedialog.asksaveasfile(mode='w', filetypes=[('PNG Image', '*.png')], defaultextension='.*')
 
 		if file is None:
 			'''If user cancels'''
 			return
 		
-
-
+		file.close()
+		fig = self.ct_img.graph()
+		fig.set_size_inches(8, 8)
+		os.remove(file.name)
+		print("Saving png file. . .")
+		plt.savefig(file.name)
 
 
 root = Tk()
