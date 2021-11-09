@@ -79,8 +79,6 @@ class CT:
 
 		#Plot sinogram
 		ax2.set_title("Sinogram")
-		ax2.set_xlabel("Projection angle (deg)")
-		ax2.set_ylabel("Projection position (pixels)")
 		ax2.imshow(sinogram, cmap=plt.cm.Greys_r)
 
 		#Plot reconstructed image
