@@ -6,6 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 from tkinter import filedialog
 from skimage import io
 from CTProgram import CT
+import os
 
 class Window:
 
@@ -18,7 +19,7 @@ class Window:
 	def init_window(self):
 		'''Collect all method in a single window'''
 
-		self.master.title("Computed Tomography Projection")
+		self.master.title("Computed Tomography Reconstruction")
 		self.fontstyle1 = ('Courier', 17, 'bold')
 		self.fontstyle2 = ('Courier', 12, 'bold')
 		self.fontstyle3 = ('Times New Roman', 11)
@@ -46,7 +47,7 @@ class Window:
 	def title(self):
 		'''Make title: Computed Tomography Projection'''
 
-		title = Label(self.frame1, text="COMPUTED TOMOGRAPHY \nPROJECTION", font=self.fontstyle1, fg='#465a62')
+		title = Label(self.frame1, text="COMPUTED TOMOGRAPHY \nRECONSTRUCTION", font=self.fontstyle1, fg='#465a62')
 		# title.place(x=140, y=5)
 		title.place(x=100, y=5)
 
@@ -56,7 +57,7 @@ class Window:
 		style = ttk.Style()
 		style.configure('TButton', font=self.fontstyle3, bg='dark blue', width=10)
 		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image)
-		image_button.place(x=320, y=210)
+		image_button.place(x=195, y=250)
 
 		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate)
 		calculate_button.place(x=320, y=250)
@@ -64,14 +65,23 @@ class Window:
 		clear_button = ttk.Button(self.frame1, text='Clear', style='TButton', width=15, command=self.clear)
 		clear_button.place(x=320, y=290)
 
+		save_button = ttk.Button(self.frame1, text='Save', style='TButton', width=15, command=self.save)
+		save_button.place(x=195, y=290)
+
 		lbl_max_angle = Label(self.frame1, text='Maximum Angle		: ', font=self.fontstyle3)
 		lbl_max_angle.place(x=20, y=90)
 
+		lbl_reconstruction = Label(self.frame1, text='Reconstruction Method	: ', font=self.fontstyle3)
+		lbl_reconstruction.place(x=20, y=120)
+
 		lbl_filter = Label(self.frame1, text='Filter Type		: ', font=self.fontstyle3)
-		lbl_filter.place(x=20, y=130)
+		lbl_filter.place(x=20, y=150)
 
 		lbl_num_proj = Label(self.frame1, text='Number of projection	: ', font=self.fontstyle3)
-		lbl_num_proj.place(x=20, y=170)
+		lbl_num_proj.place(x=20, y=180)
+
+		#combobox method
+		method_name = ['Filtered Back Projection', 'SART']
 
 		#combobox filter
 		filter_name = ['ramp', 'shepp-logan', 'cosine', 'hamming', 'hann']
@@ -83,15 +93,22 @@ class Window:
 		self.txt_angle = Text(self.frame1, width=25, height=1, font=self.fontstyle3)
 		self.txt_angle.place(x=200, y=90)
 
+		cmb_methodVar = StringVar()
+		self.cmb_method = ttk.Combobox(self.frame1, textvariable='cmb_methodVar', font=self.fontstyle4)
+		self.cmb_method['values'] = method_name
+		self.cmb_method['state'] = 'readonly'
+		self.cmb_method.current(0)
+		self.cmb_method.place(x=200, y=120)
+
 		cmb_filterVar = StringVar()
 		self.cmb_filter = ttk.Combobox(self.frame1, textvariable='cmb_filterVar', font=self.fontstyle4)
 		self.cmb_filter['values'] = filter_name
 		self.cmb_filter['state'] = 'readonly'
 		self.cmb_filter.current(0)
-		self.cmb_filter.place(x=200, y=130)
+		self.cmb_filter.place(x=200, y=150)
 
 		self.lbl_proj = Label(self.frame1, text='0 projections', font=self.fontstyle3)
-		self.lbl_proj.place(x=200, y=170)
+		self.lbl_proj.place(x=200, y=180)
 
 	def frame_2(self):
 		'''Frame 2 - for original image'''
@@ -108,8 +125,8 @@ class Window:
 	def frame_4(self):
 		'''Frame 4 - for reconstruction image'''
 
-		frame4_title = Label(self.frame4, text="Filtered Back Projection", font=self.fontstyle2, fg='black')
-		frame4_title.place(x=115, y=5)
+		frame4_title = Label(self.frame4, text="Reconstruction", font=self.fontstyle2, fg='black')
+		frame4_title.place(x=165, y=5)
 
 	def load_image(self):
 		'''Load image button command'''
@@ -134,10 +151,15 @@ class Window:
 		theta = int(self.txt_angle.get("1.0", "end"))
 		filter_type = self.cmb_filter.get() 
 
-		ct_img = CT(img, theta, filter_type)
-		sinogram = ct_img.radon_transform()
-		reconstruction = ct_img.filtered_back_projection()
-		__, __, num_projection = ct_img.process_image()
+		self.ct_img = CT(img, theta, filter_type)
+		sinogram = self.ct_img.radon_transform()
+		reconstruction = self.ct_img.filtered_back_projection()
+
+		#check if reconstruction method is SART
+		if self.cmb_method.current == 'SART':
+			reconstruction = self.ct_img.sart()
+
+		__, __, num_projection = self.ct_img.process_image()
 		self.lbl_proj.config(text = str(num_projection)+' projections')
 
 		#create sinogram graph
@@ -163,6 +185,22 @@ class Window:
 		self.canvas_sinogram.get_tk_widget().destroy()
 		self.canvas_recons.get_tk_widget().destroy()
 		self.lbl_proj.config(text = '0 projections')
+
+	def save(self):
+		'''Save button command - to save graph as png file'''
+
+		file = filedialog.asksaveasfile(mode='w', filetypes=[('PNG Image', '*.png')], defaultextension='.*')
+
+		if file is None:
+			'''If user cancels'''
+			return
+		
+		file.close()
+		fig = self.ct_img.graph()
+		fig.set_size_inches(8, 8)
+		os.remove(file.name)
+		print("Saving png file. . .")
+		plt.savefig(file.name)
 
 
 root = Tk()

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt 
 from skimage import color
-from skimage.transform import radon, iradon, rescale
+from skimage.transform import radon, iradon, iradon_sart, rescale
 
 class CT:
 
@@ -12,7 +12,7 @@ class CT:
 			max_angle = the maximum angle of projection
 			filter_name = the type of filter used in fbp
 		Result:
-			the graph of original, sinogram, filter back projection.
+			the graph of original, sinogram, filter back projection, and sart reconstruction.
 
 		"""
 		self.image = image
@@ -52,6 +52,15 @@ class CT:
 
 		return reconstruction
 
+	def sart(self):
+		"""Simultaneous algebraic reconstruction technique"""
+
+		__, theta, __ = self.process_image()
+		sinogram = self.radon_transform()
+
+		reconstruction_sart = iradon_sart(sinogram, theta=theta)
+
+		return reconstruction_sart
 
 	def graph(self):
 		"""Plot graph of original image, sinogram, image reconstruction"""
@@ -59,9 +68,10 @@ class CT:
 		image, __, __ = self.process_image()
 		sinogram = self.radon_transform()
 		reconstruction = self.filtered_back_projection()
+		reconstruction_sart = self.sart()
 
 
-		fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+		fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
 		#Plot original image
 		ax1.set_title("Original Image")
@@ -69,12 +79,15 @@ class CT:
 
 		#Plot sinogram
 		ax2.set_title("Sinogram")
-		ax2.set_xlabel("Projection angle (deg)")
-		ax2.set_ylabel("Projection position (pixels)")
 		ax2.imshow(sinogram, cmap=plt.cm.Greys_r)
 
 		#Plot reconstructed image
 		ax3.set_title("Filtered Back Projection")
 		ax3.imshow(reconstruction, cmap=plt.cm.Greys_r)
 
-		plt.show()
+		#Plot reconstructed image
+		ax4.set_title("SART")
+		ax4.imshow(reconstruction_sart, cmap=plt.cm.Greys_r)
+
+		# plt.show()
+		return fig
