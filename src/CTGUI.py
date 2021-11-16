@@ -137,6 +137,8 @@ class Window:
 		img = CT(self.image, 180, "hann")
 		rescaled_image, __, __ = img.process_image()
 		fig, ax = plt.subplots(1,1, figsize=(3, 3))
+		plt.tick_params(left = False, right = False , labelleft = False ,
+                		labelbottom = False, bottom = False)
 
 		ax.imshow(rescaled_image, cmap=plt.cm.Greys_r)
 		self.canvas_original = FigureCanvasTkAgg(fig, master=self.frame2)
@@ -164,14 +166,19 @@ class Window:
 
 		#create sinogram graph
 		fig1, ax1 = plt.subplots(1,1, figsize=(3, 3))
+		plt.tick_params(left = False, right = False , labelleft = False ,
+                		labelbottom = False, bottom = False)
 
 		ax1.imshow(sinogram, cmap=plt.cm.Greys_r)
 		self.canvas_sinogram = FigureCanvasTkAgg(fig1, master=self.frame3)
 		self.canvas_sinogram.draw()
 		self.canvas_sinogram.get_tk_widget().place(x=80, y=30)
 
+
 		#create reconstruction graph
 		fig2, ax2 = plt.subplots(1,1, figsize=(3, 3))
+		plt.tick_params(left = False, right = False , labelleft = False ,
+                		labelbottom = False, bottom = False)
 
 		ax2.imshow(reconstruction, cmap=plt.cm.Greys_r)
 		self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
