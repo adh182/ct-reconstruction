@@ -110,6 +110,15 @@ class Window:
 		self.lbl_proj = Label(self.frame1, text='0 projections', font=self.fontstyle3)
 		self.lbl_proj.place(x=200, y=180)
 
+		#Radiobutton
+		release = IntVar()
+		release.set(1)
+		self.ticks_rbutton1 = ttk.Radiobutton(self.frame1, text='Show image size', variable=release, value=1)
+		self.ticks_rbutton1.place(x=20, y=270)
+		
+		self.ticks_rbutton2 = ttk.Radiobutton(self.frame1, text='Hide image size', variable=release, value=2)
+		self.ticks_rbutton2.place(x=20, y=295)
+
 	def frame_2(self):
 		'''Frame 2 - for original image'''
 
