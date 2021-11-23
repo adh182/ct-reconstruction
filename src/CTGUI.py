@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter.ttk as ttk 
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import filedialog
 from tkinter import messagebox
 from skimage import io
