@@ -125,6 +125,8 @@ class Window:
 
 		frame2_title = Label(self.frame2, text="Original Image", font=self.fontstyle2, fg='black')
 		frame2_title.place(x=165, y=5)
+
+		self.canvas_list = []
 		
 	def frame_3(self):
 		'''Frame 3 - for sinogram'''
@@ -154,6 +156,9 @@ class Window:
 		self.canvas_original = FigureCanvasTkAgg(fig, master=self.frame2)
 		self.canvas_original.draw()
 		self.canvas_original.get_tk_widget().place(x=80, y=30)
+
+		#Add canvas to the canvas list
+		self.canvas_list.append(self.canvas_original.get_tk_widget())
 		
 	def load_image_command(self):
 		'''Load image button command'''
@@ -197,6 +202,8 @@ class Window:
 		self.canvas_sinogram.draw()
 		self.canvas_sinogram.get_tk_widget().place(x=80, y=30)
 
+		#Add canvas to the canvas list
+		self.canvas_list.append(self.canvas_sinogram.get_tk_widget())
 
 		#create reconstruction graph
 		fig2, ax2 = plt.subplots(1,1, figsize=(3, 3))
@@ -210,6 +217,9 @@ class Window:
 		self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
 		self.canvas_recons.draw()
 		self.canvas_recons.get_tk_widget().place(x=80, y=30)
+
+		#Add canvas to the canvas list
+		self.canvas_list.append(self.canvas_recons.get_tk_widget())
 
 	def calculate_command(self):
 		'''Calculate button command'''
@@ -226,6 +236,9 @@ class Window:
 		self.canvas_sinogram.get_tk_widget().destroy()
 		self.canvas_recons.get_tk_widget().destroy()
 		self.lbl_proj.config(text = '0 projections')
+
+		for canvas in self.canvas_list:
+			canvas.destroy()
 
 	def save(self):
 		'''Save button command - to save graph as png file'''
