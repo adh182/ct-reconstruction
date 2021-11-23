@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from tkinter import filedialog
+from tkinter import messagebox
 from skimage import io
 from CTProgram import CT
 import os
@@ -32,7 +33,7 @@ class Window:
 		self.frame_4()
 
 	def make_frame(self):
-		'''Make four framas'''
+		'''Make four frames'''
 
 		self.frame1 = Frame(height=340, width=460, borderwidth=3, relief=FLAT)
 		self.frame2 = Frame(height=340, width=460, borderwidth=3, relief=FLAT)
@@ -45,7 +46,7 @@ class Window:
 		self.frame4.place(x=485, y=360)
 
 	def title(self):
-		'''Make title: Computed Tomography Projection'''
+		'''Make title: Computed Tomography Reconstruction'''
 
 		title = Label(self.frame1, text="COMPUTED TOMOGRAPHY \nRECONSTRUCTION", font=self.fontstyle1, fg='#465a62')
 		# title.place(x=140, y=5)
@@ -56,10 +57,10 @@ class Window:
 
 		style = ttk.Style()
 		style.configure('TButton', font=self.fontstyle3, bg='dark blue', width=10)
-		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image)
+		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image_command)
 		image_button.place(x=195, y=250)
 
-		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate)
+		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate_command)
 		calculate_button.place(x=320, y=250)
 
 		clear_button = ttk.Button(self.frame1, text='Clear', style='TButton', width=15, command=self.clear)
@@ -110,11 +111,22 @@ class Window:
 		self.lbl_proj = Label(self.frame1, text='0 projections', font=self.fontstyle3)
 		self.lbl_proj.place(x=200, y=180)
 
+		#Radiobutton
+		self.release = IntVar()
+		self.release.set(1)
+		ticks_rbutton1 = ttk.Radiobutton(self.frame1, text='Show image size', variable=self.release, value=1)
+		ticks_rbutton1.place(x=20, y=270)
+		
+		ticks_rbutton2 = ttk.Radiobutton(self.frame1, text='Hide image size', variable=self.release, value=2)
+		ticks_rbutton2.place(x=20, y=295)
+
 	def frame_2(self):
 		'''Frame 2 - for original image'''
 
 		frame2_title = Label(self.frame2, text="Original Image", font=self.fontstyle2, fg='black')
 		frame2_title.place(x=165, y=5)
+
+		self.canvas_list = []
 		
 	def frame_3(self):
 		'''Frame 3 - for sinogram'''
@@ -128,28 +140,46 @@ class Window:
 		frame4_title = Label(self.frame4, text="Reconstruction", font=self.fontstyle2, fg='black')
 		frame4_title.place(x=165, y=5)
 
-	def load_image(self):
-		'''Load image button command'''
+	def load_image(self, image):
+		'''Load original image'''
 
-		filename = filedialog.askopenfilename()
-		self.image = io.imread(str(filename))
-
-		img = CT(self.image, 180, "hann")
+		img = CT(image, 180, "hann")
 		rescaled_image, __, __ = img.process_image()
 		fig, ax = plt.subplots(1,1, figsize=(3, 3))
+
+		#Remove image size if Hide image size radiobutton selected
+		if self.release.get() == 2:
+			plt.tick_params(left = False, right = False , labelleft = False ,
+	                		labelbottom = False, bottom = False)
 
 		ax.imshow(rescaled_image, cmap=plt.cm.Greys_r)
 		self.canvas_original = FigureCanvasTkAgg(fig, master=self.frame2)
 		self.canvas_original.draw()
 		self.canvas_original.get_tk_widget().place(x=80, y=30)
+
+		#Add canvas to the canvas list
+		self.canvas_list.append(self.canvas_original.get_tk_widget())
 		
+	def load_image_command(self):
+		'''Load image button command'''
+
+		filename = filedialog.askopenfilename()
+		try:
+			self.image = io.imread(str(filename))
+		except:
+			messagebox.showinfo('Wrong format', 'Unsupported file extension.\nTry image in .png or .jpeg')
+
+		self.load_image(self.image)
 
 	def calculate(self):
-		'''Calculate button command'''
+		'''Calculate sinogram and reconstruction image'''
 
 		img = self.image
 		theta = int(self.txt_angle.get("1.0", "end"))
 		filter_type = self.cmb_filter.get() 
+
+		#Call original image - update the state if Hide image size radiobutton selected 
+		self.load_image(img)
 
 		self.ct_img = CT(img, theta, filter_type)
 		sinogram = self.ct_img.radon_transform()
@@ -165,18 +195,42 @@ class Window:
 		#create sinogram graph
 		fig1, ax1 = plt.subplots(1,1, figsize=(3, 3))
 
+		#Remove image size if Hide image size radiobutton selected
+		if self.release.get() == 2:
+			plt.tick_params(left = False, right = False , labelleft = False ,
+                			labelbottom = False, bottom = False)
+
 		ax1.imshow(sinogram, cmap=plt.cm.Greys_r)
 		self.canvas_sinogram = FigureCanvasTkAgg(fig1, master=self.frame3)
 		self.canvas_sinogram.draw()
 		self.canvas_sinogram.get_tk_widget().place(x=80, y=30)
 
+		#Add canvas to the canvas list
+		self.canvas_list.append(self.canvas_sinogram.get_tk_widget())
+
 		#create reconstruction graph
 		fig2, ax2 = plt.subplots(1,1, figsize=(3, 3))
+
+		#Remove image size if Hide image size radiobutton selected
+		if self.release.get() == 2:
+			plt.tick_params(left = False, right = False , labelleft = False ,
+	                		labelbottom = False, bottom = False)
 
 		ax2.imshow(reconstruction, cmap=plt.cm.Greys_r)
 		self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
 		self.canvas_recons.draw()
 		self.canvas_recons.get_tk_widget().place(x=80, y=30)
+
+		#Add canvas to the canvas list
+		self.canvas_list.append(self.canvas_recons.get_tk_widget())
+
+	def calculate_command(self):
+		'''Calculate button command'''
+
+		try:
+			self.calculate()
+		except:
+			messagebox.showerror('Error', 'Required input unspecified')
 
 	def clear(self):
 		'''Clear button command - to clear all the results'''
@@ -185,6 +239,9 @@ class Window:
 		self.canvas_sinogram.get_tk_widget().destroy()
 		self.canvas_recons.get_tk_widget().destroy()
 		self.lbl_proj.config(text = '0 projections')
+
+		for canvas in self.canvas_list:
+			canvas.destroy()
 
 	def save(self):
 		'''Save button command - to save graph as png file'''
