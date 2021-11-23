@@ -56,7 +56,7 @@ class Window:
 
 		style = ttk.Style()
 		style.configure('TButton', font=self.fontstyle3, bg='dark blue', width=10)
-		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image)
+		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image_command)
 		image_button.place(x=195, y=250)
 
 		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate)
@@ -137,13 +137,10 @@ class Window:
 		frame4_title = Label(self.frame4, text="Reconstruction", font=self.fontstyle2, fg='black')
 		frame4_title.place(x=165, y=5)
 
-	def load_image(self):
-		'''Load image button command'''
+	def load_image(self, image):
+		'''Load original image'''
 
-		filename = filedialog.askopenfilename()
-		self.image = io.imread(str(filename))
-
-		img = CT(self.image, 180, "hann")
+		img = CT(image, 180, "hann")
 		rescaled_image, __, __ = img.process_image()
 		fig, ax = plt.subplots(1,1, figsize=(3, 3))
 
@@ -157,6 +154,13 @@ class Window:
 		self.canvas_original.draw()
 		self.canvas_original.get_tk_widget().place(x=80, y=30)
 		
+	def load_image_command(self):
+		'''Load image button command'''
+
+		filename = filedialog.askopenfilename()
+		self.image = io.imread(str(filename))
+
+		self.load_image(self.image)
 
 	def calculate(self):
 		'''Calculate button command'''
@@ -164,6 +168,9 @@ class Window:
 		img = self.image
 		theta = int(self.txt_angle.get("1.0", "end"))
 		filter_type = self.cmb_filter.get() 
+
+		#Call original image - update the state if Hide image size specified 
+		self.load_image(img)
 
 		self.ct_img = CT(img, theta, filter_type)
 		sinogram = self.ct_img.radon_transform()
