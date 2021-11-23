@@ -31,6 +31,7 @@ class Window:
 		self.frame_2()
 		self.frame_3()
 		self.frame_4()
+		self.credit()
 
 	def make_frame(self):
 		'''Make four frames'''
@@ -139,6 +140,12 @@ class Window:
 
 		frame4_title = Label(self.frame4, text="Reconstruction", font=self.fontstyle2, fg='black')
 		frame4_title.place(x=165, y=5)
+
+	def credit(self):
+		'''Put credit'''
+
+		self.lbl_credit = Label(self.master, text='Created by Adh : i_alimurrijal@student.ub.ac.id', font=('Times New Roman', 10), fg='black', bg='#c9d0d3')
+		self.lbl_credit.place(x=11, y=700)
 
 	def load_image(self, image):
 		'''Load original image'''
