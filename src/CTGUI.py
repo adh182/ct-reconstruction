@@ -111,13 +111,13 @@ class Window:
 		self.lbl_proj.place(x=200, y=180)
 
 		#Radiobutton
-		release = IntVar()
-		release.set(1)
-		self.ticks_rbutton1 = ttk.Radiobutton(self.frame1, text='Show image size', variable=release, value=1)
-		self.ticks_rbutton1.place(x=20, y=270)
+		self.release = IntVar()
+		self.release.set(1)
+		ticks_rbutton1 = ttk.Radiobutton(self.frame1, text='Show image size', variable=self.release, value=1)
+		ticks_rbutton1.place(x=20, y=270)
 		
-		self.ticks_rbutton2 = ttk.Radiobutton(self.frame1, text='Hide image size', variable=release, value=2)
-		self.ticks_rbutton2.place(x=20, y=295)
+		ticks_rbutton2 = ttk.Radiobutton(self.frame1, text='Hide image size', variable=self.release, value=2)
+		ticks_rbutton2.place(x=20, y=295)
 
 	def frame_2(self):
 		'''Frame 2 - for original image'''
@@ -146,8 +146,11 @@ class Window:
 		img = CT(self.image, 180, "hann")
 		rescaled_image, __, __ = img.process_image()
 		fig, ax = plt.subplots(1,1, figsize=(3, 3))
-		plt.tick_params(left = False, right = False , labelleft = False ,
-                		labelbottom = False, bottom = False)
+
+		#Remove image size if Hide image size radiobutton selected
+		if self.release.get() == 2:
+			plt.tick_params(left = False, right = False , labelleft = False ,
+	                		labelbottom = False, bottom = False)
 
 		ax.imshow(rescaled_image, cmap=plt.cm.Greys_r)
 		self.canvas_original = FigureCanvasTkAgg(fig, master=self.frame2)
@@ -175,8 +178,11 @@ class Window:
 
 		#create sinogram graph
 		fig1, ax1 = plt.subplots(1,1, figsize=(3, 3))
-		plt.tick_params(left = False, right = False , labelleft = False ,
-                		labelbottom = False, bottom = False)
+
+		#Remove image size if Hide image size radiobutton selected
+		if self.release.get() == 2:
+			plt.tick_params(left = False, right = False , labelleft = False ,
+                			labelbottom = False, bottom = False)
 
 		ax1.imshow(sinogram, cmap=plt.cm.Greys_r)
 		self.canvas_sinogram = FigureCanvasTkAgg(fig1, master=self.frame3)
@@ -186,8 +192,11 @@ class Window:
 
 		#create reconstruction graph
 		fig2, ax2 = plt.subplots(1,1, figsize=(3, 3))
-		plt.tick_params(left = False, right = False , labelleft = False ,
-                		labelbottom = False, bottom = False)
+
+		#Remove image size if Hide image size radiobutton selected
+		if self.release.get() == 2:
+			plt.tick_params(left = False, right = False , labelleft = False ,
+	                		labelbottom = False, bottom = False)
 
 		ax2.imshow(reconstruction, cmap=plt.cm.Greys_r)
 		self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
