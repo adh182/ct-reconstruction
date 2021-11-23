@@ -164,7 +164,10 @@ class Window:
 		'''Load image button command'''
 
 		filename = filedialog.askopenfilename()
-		self.image = io.imread(str(filename))
+		try:
+			self.image = io.imread(str(filename))
+		except:
+			messagebox.showinfo('Wrong format', 'Unsupported file extension.\nTry image in .png or .jpeg')
 
 		self.load_image(self.image)
 
