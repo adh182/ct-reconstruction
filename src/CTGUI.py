@@ -32,7 +32,7 @@ class Window:
 		self.frame_4()
 
 	def make_frame(self):
-		'''Make four framas'''
+		'''Make four frames'''
 
 		self.frame1 = Frame(height=340, width=460, borderwidth=3, relief=FLAT)
 		self.frame2 = Frame(height=340, width=460, borderwidth=3, relief=FLAT)
@@ -45,7 +45,7 @@ class Window:
 		self.frame4.place(x=485, y=360)
 
 	def title(self):
-		'''Make title: Computed Tomography Projection'''
+		'''Make title: Computed Tomography Reconstruction'''
 
 		title = Label(self.frame1, text="COMPUTED TOMOGRAPHY \nRECONSTRUCTION", font=self.fontstyle1, fg='#465a62')
 		# title.place(x=140, y=5)
@@ -169,7 +169,7 @@ class Window:
 		theta = int(self.txt_angle.get("1.0", "end"))
 		filter_type = self.cmb_filter.get() 
 
-		#Call original image - update the state if Hide image size specified 
+		#Call original image - update the state if Hide image size radiobutton selected 
 		self.load_image(img)
 
 		self.ct_img = CT(img, theta, filter_type)
