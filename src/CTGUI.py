@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure 
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 from tkinter import filedialog
+from tkinter import messagebox
 from skimage import io
 from CTProgram import CT
 import os
@@ -59,7 +60,7 @@ class Window:
 		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image_command)
 		image_button.place(x=195, y=250)
 
-		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate)
+		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate_command)
 		calculate_button.place(x=320, y=250)
 
 		clear_button = ttk.Button(self.frame1, text='Clear', style='TButton', width=15, command=self.clear)
@@ -163,7 +164,7 @@ class Window:
 		self.load_image(self.image)
 
 	def calculate(self):
-		'''Calculate button command'''
+		'''Calculate sinogram and reconstruction image'''
 
 		img = self.image
 		theta = int(self.txt_angle.get("1.0", "end"))
@@ -209,6 +210,14 @@ class Window:
 		self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
 		self.canvas_recons.draw()
 		self.canvas_recons.get_tk_widget().place(x=80, y=30)
+
+	def calculate_command(self):
+		'''Calculate button command'''
+
+		try:
+			self.calculate()
+		except:
+			messagebox.showerror('Error', 'Required input unspecified')
 
 	def clear(self):
 		'''Clear button command - to clear all the results'''
