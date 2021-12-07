@@ -59,7 +59,10 @@ class Window:
 		style = ttk.Style()
 		style.configure('TButton', font=self.fontstyle3, bg='dark blue', width=10)
 		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image_command)
-		image_button.place(x=195, y=250)
+		image_button.place(x=255, y=210)
+
+		animate_button = ttk.Button(self.frame1, text='Animate', style='TButton', width=15)
+		animate_button.place(x=195, y=250)
 
 		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate_command)
 		calculate_button.place(x=320, y=250)
