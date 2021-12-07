@@ -197,7 +197,12 @@ class Window:
 		#Call original image - update the state if Hide image size radiobutton selected 
 		self.load_image(img)
 
-		for i in range(10, theta, 10):
+		#Set start angle for looping
+		start_theta = theta
+		if self.release2.get() == 2:
+			start_theta = 10
+
+		for i in range(start_theta, theta+1, 10):
 			self.ct_img = CT(img, i, filter_type)
 			__, __, num_projection = self.ct_img.process_image()
 			self.lbl_proj.config(text = str(num_projection)+' projections')
@@ -244,10 +249,11 @@ class Window:
 	def calculate_command(self):
 		'''Calculate button command'''
 
-		try:
-			self.calculate()
-		except:
-			messagebox.showerror('Error', 'Required input unspecified')
+		# try:
+		# 	self.calculate()
+		# except:
+		# 	messagebox.showerror('Error', 'Required input unspecified')
+		self.calculate()
 
 	def clear(self):
 		'''Clear button command - to clear all the results'''
