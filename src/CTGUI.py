@@ -121,6 +121,15 @@ class Window:
 		ticks_rbutton2 = ttk.Radiobutton(self.frame1, text='Hide image size', variable=self.release, value=2)
 		ticks_rbutton2.place(x=20, y=295)
 
+		#Animate radiobutton
+		self.release2 = IntVar()
+		self.release2.set(1)
+		animate_rbutton1 = ttk.Radiobutton(self.frame1, text='Without animation', variable=self.release2, value=1)
+		animate_rbutton1.place(x=20, y=220)
+
+		animate_rbutton2 = ttk.Radiobutton(self.frame1, text='With animation', variable=self.release2, value=2)
+		animate_rbutton2.place(x=20, y=245)
+
 	def frame_2(self):
 		'''Frame 2 - for original image'''
 
@@ -177,15 +186,6 @@ class Window:
 			messagebox.showinfo('Wrong format', 'Unsupported file extension.\nTry image in .png or .jpeg')
 
 		self.load_image(self.image)
-
-	def sinogram_animate(self, img, theta, filter_type):
-
-		for i in range(10, theta, 10):
-			self.ct_img = CT(img, i, filter_type)
-			sinogram = self.ct_img.radon_transform()
-
-		return sinogram
-
 
 	def calculate(self):
 		'''Calculate sinogram and reconstruction image'''
