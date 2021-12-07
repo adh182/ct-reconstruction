@@ -61,7 +61,7 @@ class Window:
 		image_button = ttk.Button(self.frame1, text="Load Image", style='TButton', width=15, command=self.load_image_command)
 		image_button.place(x=255, y=210)
 
-		animate_button = ttk.Button(self.frame1, text='Animate', style='TButton', width=15)
+		animate_button = ttk.Button(self.frame1, text='Animate', style='TButton', width=15, command=self.animate_command)
 		animate_button.place(x=195, y=250)
 
 		calculate_button = ttk.Button(self.frame1, text='Calculate', style='TButton', width=15, command=self.calculate_command)
@@ -234,11 +234,74 @@ class Window:
 		#Add canvas to the canvas list
 		self.canvas_list.append(self.canvas_recons.get_tk_widget())
 
+	def animate(self):
+		'''Animate sinogram and reconstruction image'''
+
+		img = self.image
+		theta = int(self.txt_angle.get("1.0", "end"))
+		filter_type = self.cmb_filter.get() 
+
+		#Call original image - update the state if Hide image size radiobutton selected 
+		self.load_image(img)
+
+		for theta_step in range(10, theta+1, 10):
+			self.ct_img = CT(img, theta_step, filter_type)
+			__, __, num_projection = self.ct_img.process_image()
+			self.lbl_proj.config(text = str(num_projection)+' projections')
+
+			sinogram = self.ct_img.radon_transform()
+
+			#create sinogram graph
+			fig1, ax1 = plt.subplots(1,1, figsize=(3, 3))
+
+			#Remove image size if Hide image size radiobutton selected
+			if self.release.get() == 2:
+				plt.tick_params(left = False, right = False , labelleft = False ,
+	                			labelbottom = False, bottom = False)
+
+			ax1.imshow(sinogram, cmap=plt.cm.Greys_r)
+			self.canvas_sinogram = FigureCanvasTkAgg(fig1, master=self.frame3)
+			self.canvas_sinogram.draw()
+			self.canvas_sinogram.get_tk_widget().place(x=80, y=30)
+			self.canvas_sinogram.flush_events()
+
+			#create reconstruction graph
+			reconstruction = self.ct_img.filtered_back_projection()
+
+			#check if reconstruction method is SART
+			if self.cmb_method.current == 'SART':
+				reconstruction = self.ct_img.sart()
+			fig2, ax2 = plt.subplots(1,1, figsize=(3, 3))
+
+			#Remove image size if Hide image size radiobutton selected
+			if self.release.get() == 2:
+				plt.tick_params(left = False, right = False , labelleft = False ,
+		                		labelbottom = False, bottom = False)
+
+			ax2.imshow(reconstruction, cmap=plt.cm.Greys_r)
+			self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
+			self.canvas_recons.draw()
+			self.canvas_recons.get_tk_widget().place(x=80, y=30)
+			self.canvas_sinogram.flush_events()
+
+			#Add canvas to the canvas list
+			self.canvas_list.append(self.canvas_sinogram.get_tk_widget())
+			self.canvas_list.append(self.canvas_recons.get_tk_widget())
+
+
 	def calculate_command(self):
 		'''Calculate button command'''
 
 		try:
 			self.calculate()
+		except:
+			messagebox.showerror('Error', 'Required input unspecified')
+
+	def animate_command(self):
+		'''Animate button command'''
+
+		try:
+			self.animate()
 		except:
 			messagebox.showerror('Error', 'Required input unspecified')
 
