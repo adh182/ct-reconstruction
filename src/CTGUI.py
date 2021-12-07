@@ -178,6 +178,15 @@ class Window:
 
 		self.load_image(self.image)
 
+	def sinogram_animate(self, img, theta, filter_type):
+
+		for i in range(10, theta, 10):
+			self.ct_img = CT(img, i, filter_type)
+			sinogram = self.ct_img.radon_transform()
+
+		return sinogram
+
+
 	def calculate(self):
 		'''Calculate sinogram and reconstruction image'''
 
@@ -188,48 +197,49 @@ class Window:
 		#Call original image - update the state if Hide image size radiobutton selected 
 		self.load_image(img)
 
-		self.ct_img = CT(img, theta, filter_type)
-		sinogram = self.ct_img.radon_transform()
-		reconstruction = self.ct_img.filtered_back_projection()
+		for i in range(10, theta, 10):
+			self.ct_img = CT(img, i, filter_type)
+			__, __, num_projection = self.ct_img.process_image()
+			self.lbl_proj.config(text = str(num_projection)+' projections')
 
-		#check if reconstruction method is SART
-		if self.cmb_method.current == 'SART':
-			reconstruction = self.ct_img.sart()
+			sinogram = self.ct_img.radon_transform()
 
-		__, __, num_projection = self.ct_img.process_image()
-		self.lbl_proj.config(text = str(num_projection)+' projections')
+			#create sinogram graph
+			fig1, ax1 = plt.subplots(1,1, figsize=(3, 3))
 
-		#create sinogram graph
-		fig1, ax1 = plt.subplots(1,1, figsize=(3, 3))
+			#Remove image size if Hide image size radiobutton selected
+			if self.release.get() == 2:
+				plt.tick_params(left = False, right = False , labelleft = False ,
+	                			labelbottom = False, bottom = False)
 
-		#Remove image size if Hide image size radiobutton selected
-		if self.release.get() == 2:
-			plt.tick_params(left = False, right = False , labelleft = False ,
-                			labelbottom = False, bottom = False)
+			ax1.imshow(sinogram, cmap=plt.cm.Greys_r)
+			self.canvas_sinogram = FigureCanvasTkAgg(fig1, master=self.frame3)
+			self.canvas_sinogram.draw()
+			self.canvas_sinogram.get_tk_widget().place(x=80, y=30)
+			self.canvas_sinogram.flush_events()
 
-		ax1.imshow(sinogram, cmap=plt.cm.Greys_r)
-		self.canvas_sinogram = FigureCanvasTkAgg(fig1, master=self.frame3)
-		self.canvas_sinogram.draw()
-		self.canvas_sinogram.get_tk_widget().place(x=80, y=30)
+			#create reconstruction graph
+			reconstruction = self.ct_img.filtered_back_projection()
 
-		#Add canvas to the canvas list
-		self.canvas_list.append(self.canvas_sinogram.get_tk_widget())
+			#check if reconstruction method is SART
+			if self.cmb_method.current == 'SART':
+				reconstruction = self.ct_img.sart()
+			fig2, ax2 = plt.subplots(1,1, figsize=(3, 3))
 
-		#create reconstruction graph
-		fig2, ax2 = plt.subplots(1,1, figsize=(3, 3))
+			#Remove image size if Hide image size radiobutton selected
+			if self.release.get() == 2:
+				plt.tick_params(left = False, right = False , labelleft = False ,
+		                		labelbottom = False, bottom = False)
 
-		#Remove image size if Hide image size radiobutton selected
-		if self.release.get() == 2:
-			plt.tick_params(left = False, right = False , labelleft = False ,
-	                		labelbottom = False, bottom = False)
+			ax2.imshow(reconstruction, cmap=plt.cm.Greys_r)
+			self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
+			self.canvas_recons.draw()
+			self.canvas_recons.get_tk_widget().place(x=80, y=30)
+			self.canvas_sinogram.flush_events()
 
-		ax2.imshow(reconstruction, cmap=plt.cm.Greys_r)
-		self.canvas_recons = FigureCanvasTkAgg(fig2, master=self.frame4)
-		self.canvas_recons.draw()
-		self.canvas_recons.get_tk_widget().place(x=80, y=30)
-
-		#Add canvas to the canvas list
-		self.canvas_list.append(self.canvas_recons.get_tk_widget())
+			#Add canvas to the canvas list
+			self.canvas_list.append(self.canvas_sinogram.get_tk_widget())
+			self.canvas_list.append(self.canvas_recons.get_tk_widget())
 
 	def calculate_command(self):
 		'''Calculate button command'''
