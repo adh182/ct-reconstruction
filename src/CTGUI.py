@@ -249,11 +249,10 @@ class Window:
 	def calculate_command(self):
 		'''Calculate button command'''
 
-		# try:
-		# 	self.calculate()
-		# except:
-		# 	messagebox.showerror('Error', 'Required input unspecified')
-		self.calculate()
+		try:
+			self.calculate()
+		except:
+			messagebox.showerror('Error', 'Required input unspecified')
 
 	def clear(self):
 		'''Clear button command - to clear all the results'''
