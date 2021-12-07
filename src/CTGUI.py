@@ -244,6 +244,7 @@ class Window:
 		#Call original image - update the state if Hide image size radiobutton selected 
 		self.load_image(img)
 
+		#Animate from 10 - theta
 		for theta_step in range(10, theta+1, 10):
 			self.ct_img = CT(img, theta_step, filter_type)
 			__, __, num_projection = self.ct_img.process_image()
@@ -287,7 +288,6 @@ class Window:
 			#Add canvas to the canvas list
 			self.canvas_list.append(self.canvas_sinogram.get_tk_widget())
 			self.canvas_list.append(self.canvas_recons.get_tk_widget())
-
 
 	def calculate_command(self):
 		'''Calculate button command'''
